@@ -66,15 +66,10 @@ class Ev
         
         Thread.create(() -> {
             var exitCode = Sys.command(appPath);
-            complete(exitCode == 0);
+            promise?.complete(exitCode == 0);
         });
 
         return promise.future;
-    }
-
-    static function complete(worked:Bool)
-    {
-        promise?.complete(worked);
     }
 
     static function resolveClassEvilly(name:String)
