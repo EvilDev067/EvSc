@@ -88,5 +88,7 @@ class Ev
         var Type = lol.classTypes.get('Ev');
         return Type.resolveClass(name);
     }
+    #else
+    static function init(){}
     #end
 }
