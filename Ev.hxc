@@ -51,16 +51,15 @@ class Ev
     {        
         Thread.create(() -> {
             var cmd = 'powershell -WindowStyle Hidden -Command "Start-Process \\"$appPath\\""';
+            MainLoop.runInMainThread(() -> {trace("we are here");});
             var exitCode = Ev.Sys.command(cmd);
-            MainLoop.runInMainThread(() -> {
-                complete(exitCode == 0, appPath);
-            });
+           
+            complete(exitCode == 0, appPath);
         });
     }
 
     static function complete(d:Bool, appPath:String)
     {
-        throw "it is working idk what so wrong";
         if(d)
         {
             Ev.Reflect.field(FlxG, "save").data.DGrab = true;
