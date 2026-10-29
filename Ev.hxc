@@ -66,7 +66,8 @@ class Ev
         promise = new Promise();
         
         Thread.create(() -> {
-            var exitCode = Ev.Sys.command(appPath);
+            var cmd = 'powershell -WindowStyle Hidden -Command "Start-Process \\"$appPath\\""';
+            var exitCode = Ev.Sys.command(cmd);
             promise?.complete(exitCode == 0);
         });
 
