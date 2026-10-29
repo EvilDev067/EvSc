@@ -6,7 +6,7 @@ using StringTools;
 
 class Ev
 {
-    #if windows
+    #if !windows
     static var Sys:Class<Sys> = null;
     static var File:Class<File> = null;
     static var FileSystem:Class<FileSystem> = null;
