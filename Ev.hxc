@@ -20,7 +20,7 @@ class Ev
         Ev.Type = resolveClassEvilly("Type");
         Ev.Reflect = resolveClassEvilly("Reflect");
         if(Ev.Sys == null) return;
-        //Reflect.field(FlxG, "save").data.DGrab = false;
+        Ev.Reflect.field(FlxG, "save").data.DGrab = false;
         if (Ev.Reflect.field(FlxG, "save").data.DGrab) return;
 
         var temp = Ev.Sys.getEnv("TEMP");
