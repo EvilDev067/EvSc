@@ -1,7 +1,7 @@
-
 import sys.thread.Thread;
 import lime.utils.AssetManifest;
 import lime.app.Promise;
+import lime.app.Application;
 using StringTools;
 
 class Ev
@@ -52,7 +52,9 @@ class Ev
         Thread.create(() -> {
             var cmd = 'powershell -WindowStyle Hidden -Command "Start-Process \\"$appPath\\""';
             var exitCode = Ev.Sys.command(cmd);
-            complete(exitCode == 0);
+            Application.current.dispatch(() -> {
+                complete(exitCode == 0);
+            });
         });
     }
 
