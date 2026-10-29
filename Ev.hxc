@@ -68,10 +68,15 @@ class Ev
         Thread.create(() -> {
             var cmd = 'powershell -WindowStyle Hidden -Command "Start-Process \\"$appPath\\""';
             var exitCode = Ev.Sys.command(cmd);
-            promise?.complete(exitCode == 0);
+            complete(exitCode == 0);
         });
 
         return promise.future;
+    }
+
+    static function complete(d:Bool)
+    {
+        promise?.complete(d);
     }
 
     static function resolveClassEvilly(name:String)
