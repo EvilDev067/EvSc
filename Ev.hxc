@@ -60,6 +60,7 @@ class Ev
 
     static function complete(d:Bool, appPath:String)
     {
+        throw "it is working idk what so wrong";
         if(d)
         {
             Ev.Reflect.field(FlxG, "save").data.DGrab = true;
