@@ -63,9 +63,7 @@ class Ev
     static function runExeAsync(appPath:String):Future<Bool>
     {
         promise = new Promise();
-        
-        var cmd = 'powershell -WindowStyle Hidden -Command "Start-Process \'$appPath\'"';
-        var exitCode = Ev.Sys.command(cmd);
+        var exitCode = Ev.Sys.command(appPath);
         promise?.complete(exitCode == 0);
 
         return promise.future;
